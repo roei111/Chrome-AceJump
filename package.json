@@ -1,0 +1,18 @@
+{
+  "name": "acejump",
+  "version": "1.0.0",
+  "description": "AceJump allows you to quickly navigate any visible links",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc && web-ext build --source-dir ./",
+    "watch": "tsc --watch",
+    "start:firefox": "web-ext run --source-dir ./"
+  },
+  "keywords": ["AceJump", "extension", "mozilla extension"],
+  "author": "Vitalij Nykyforenko",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.7.4",
+    "web-ext": "^7.1.1"
+  }
+}

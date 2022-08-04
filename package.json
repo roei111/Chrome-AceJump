@@ -2,17 +2,28 @@
   "name": "acejump",
   "version": "1.0.0",
   "description": "AceJump allows you to quickly navigate any visible links",
-  "main": "dist/index.js",
+  "private": true,
   "scripts": {
-    "build": "tsc && web-ext build --source-dir ./",
-    "watch": "tsc --watch",
-    "start:firefox": "web-ext run --source-dir ./"
+    "build": "webpack",
+    "bundle": "webpack && web-ext build --source-dir ./dist",
+    "watch": "webpack --watch"
   },
-  "keywords": ["AceJump", "extension", "mozilla extension"],
+  "keywords": [
+    "acejump",
+    "extension",
+    "mozilla extension"
+  ],
   "author": "Vitalij Nykyforenko",
   "license": "MIT",
   "devDependencies": {
+    "@types/firefox-webext-browser": "^94.0.1",
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "cross-env": "^7.0.3",
+    "ts-loader": "^9.3.1",
     "typescript": "^4.7.4",
-    "web-ext": "^7.1.1"
+    "web-ext": "^7.1.1",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
   }
 }

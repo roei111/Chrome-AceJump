@@ -1,12 +1,13 @@
 {
   "name": "acejump",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "AceJump allows you to quickly navigate any visible links",
   "private": true,
   "scripts": {
     "build": "webpack",
     "bundle": "webpack && web-ext build --source-dir ./dist",
-    "watch": "webpack --watch"
+    "watch": "webpack --watch",
+    "start": "web-ext run --source-dir ./dist"
   },
   "keywords": [
     "acejump",

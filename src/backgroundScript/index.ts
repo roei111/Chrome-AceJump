@@ -1,10 +1,12 @@
-function sendMessageToTabs(tabs: any) {
+function sendMessageToTabs(tabs: browser.tabs.Tab[]) {
   for (let tab of tabs) {
-    browser.tabs.sendMessage(tab.id, {});
+    if (tab.id) {
+      void browser.tabs.sendMessage(tab.id, { action: 'highlight' });
+    }
   }
 }
 
-browser.commands.onCommand.addListener(function (command: any) {
+browser.commands.onCommand.addListener(function (command) {
   if (command === "highlight") {
     browser.tabs.query({
       currentWindow: true,

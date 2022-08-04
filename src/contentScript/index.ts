@@ -1,125 +1,160 @@
-function isHidden(el: HTMLElement) {
-  return el.offsetParent === null;
+import { convertToNumberingScheme } from "../utils/convertToNumberingScheme";
+import { isHidden } from "../utils/isHidden";
+import { isInViewport } from "../utils/isInViewport";
+
+type Link = HTMLAreaElement | HTMLAnchorElement;
+
+type HintItem = {
+  hintElement: HTMLDivElement;
+  link: Link;
+  key: string;
 }
 
-function convertToNumberingScheme(currentNumber: number): string {
-  const baseChar = ("A").charCodeAt(0);
-  let letters = "";
-  do {
-    const delta = currentNumber % 26;
-    letters = String.fromCharCode(baseChar + delta) + letters;
-    currentNumber = currentNumber - delta;
-    currentNumber -= 1;
-  } while (currentNumber > 0);
+const HINTS_WRAPPER_ID = "hints-wrapper";
+const backgroundColor = 'yellow';
+const highlightColor = 'greenyellow'
 
-  return letters;
-}
-
-function isInViewport(element: HTMLElement) {
-  const rect = element.getBoundingClientRect();
-
-  return (
-    rect.top >= 0 &&
-    rect.left >= 0 &&
-    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-  );
-}
-
-let appendedChildren: HTMLElement[] = [];
-let links: { link: HTMLAreaElement | HTMLAnchorElement; key: string }[] = [];
+let hintItems: HintItem[] = [];
+let wrapperElement: HTMLDivElement | null = null;
 let currentKeys = "";
 
+function removeHintsWrapper() {
+  const hintsWrapper = document.getElementById(HINTS_WRAPPER_ID);
+
+  if (hintsWrapper) {
+    hintsWrapper.parentElement?.removeChild(hintsWrapper);
+  }
+}
+
+function createHintsWrapperElement() {
+  removeHintsWrapper();
+
+  const div = document.createElement("div");
+
+  div.style.position = "absolute";
+  div.style.top = "0";
+  div.style.bottom = "0";
+  div.style.left = "0";
+  div.style.right = "0";
+  div.style.zIndex = "9999";
+
+  div.id = HINTS_WRAPPER_ID;
+
+  div.onclick = () => {
+    clearData();
+  };
+
+  return div;
+}
+
+function createHintElement(key: string, top: number, left: number) {
+  const div = document.createElement("div");
+
+  div.style.height = "20px";
+  div.style.background = backgroundColor;
+  div.style.color = "black";
+
+  div.textContent = key;
+  div.style.position = "fixed";
+  div.style.zIndex = "99999";
+
+  div.style.top = `${top - 18}px`;
+  div.style.left = `${left}px`;
+
+  return div;
+}
+
+function highlightHint(search: string) {
+  hintItems.forEach(({ hintElement, key }) => {
+    const firstPart = key.substring(0, search.length);
+
+    if (firstPart === search) {
+      const secondPart = key.substring(search.length);
+
+      hintElement.innerHTML = `
+        <span 
+          style="background-color: ${highlightColor}; height: 20px"
+        >
+          ${firstPart}
+        </span>
+        ${secondPart}
+      `;
+    } else {
+      hintElement.textContent = key;
+    }
+  });
+}
+
+function keydownHandler(event: KeyboardEvent) {
+  if (hintItems.length && event.key.length === 1 && event.key.match(/[a-z]/i)) {
+    currentKeys += event.key.toUpperCase();
+
+    highlightHint(currentKeys);
+  }
+
+  if (event.key === "Enter" && currentKeys.length) {
+    const hintItem = hintItems.find(({ key }) => key === currentKeys);
+
+    if (hintItem) {
+      hintItem.link.click();
+    }
+
+    clearData();
+  }
+
+  if (event.key === "Escape") {
+    clearData();
+  }
+
+  if (event.key === "Backspace") {
+    currentKeys = currentKeys.substring(0, currentKeys.length - 1);
+    highlightHint(currentKeys);
+  }
+
+}
+
 const clearData = () => {
-  appendedChildren.forEach(el => document.body.removeChild(el));
-  appendedChildren = [];
+  hintItems = [];
   currentKeys = "";
+  removeHintsWrapper();
+  document.removeEventListener("keydown", keydownHandler);
 };
 
-browser.runtime.onMessage.addListener(() => {
-  const visibleLinks = Array.from(document.links)
-    .reduce<(HTMLAreaElement | HTMLAnchorElement)[]>((links, currentLink) => {
+function getVisibleLinks() {
+  return Array.from(document.links)
+    .reduce<Link[]>((links, currentLink) => {
       if (isInViewport(currentLink) && !isHidden(currentLink)) {
         return [...links, currentLink];
       }
 
       return links;
     }, []);
-
-  appendedChildren.forEach(el => document.body.removeChild(el));
-  appendedChildren = [];
-  links = [];
-  appendedChildren = visibleLinks.map((link, index) => {
-    const div = document.createElement("div");
-    div.style.height = "20px";
-    div.style.background = "yellow";
-    div.style.color = "black";
-    const key = convertToNumberingScheme(index);
-    console.log(index, key);
-    div.innerHTML = key;
-    div.dataset.key = key;
-    div.style.position = "fixed";
-    div.style.zIndex = "99999";
-
-    links.push({
-      link, key,
-    });
-
-    const viewportOffset = link.getBoundingClientRect();
-// these are relative to the viewport, i.e. the window
-    const top = viewportOffset.top;
-    const left = viewportOffset.left;
-    div.style.top = `${top - 18}px`;
-    div.style.left = `${left}px`;
-
-    return document.body.appendChild(div);
-  });
-});
-
-function updateStyles(search: string) {
-  appendedChildren.forEach(ch => {
-    const dataItem = String(ch.dataset.key);
-
-    const firstpart = dataItem.substring(0, currentKeys.length);
-    if (firstpart === currentKeys) {
-
-      const secondpart = dataItem.substring(currentKeys.length);
-      ch.innerHTML = `
-          <span style="background-color: greenyellow">${firstpart}</span>${secondpart}
-      `;
-    } else {
-      ch.innerHTML = dataItem;
-    }
-  });
 }
 
-document.onkeydown = function (evt) {
-  if (appendedChildren.length && evt.key.length === 1 && evt.key.match(/[a-z]/i)) {
-    currentKeys += evt.key.toUpperCase();
-
-    updateStyles(currentKeys);
-  }
-
-  if (evt.key === "Enter" && currentKeys.length) {
-    const link = links.find(({ link, key }) => key === currentKeys);
-
-    if (link) {
-      link.link.click();
-      clearData();
-    }
-    currentKeys = "";
-  }
-
-  if (evt.key === "Escape") {
-    clearData();
-  }
-
-  if (evt.key === "Backspace") {
-    currentKeys = currentKeys.substring(0, currentKeys.length - 1);
-    updateStyles(currentKeys);
-  }
-};
-
-document.addEventListener("scroll", () => {
+browser.runtime.onMessage.addListener(() => {
   clearData();
+  const visibleLinks = getVisibleLinks();
+  wrapperElement = createHintsWrapperElement();
+  document.addEventListener("keydown", keydownHandler);
+
+  hintItems = visibleLinks.map((link, index) => {
+    const key = convertToNumberingScheme(index);
+
+    const viewportOffset = link.getBoundingClientRect();
+
+    const top = viewportOffset.top;
+    const left = viewportOffset.left;
+
+    const hintElement = createHintElement(key, top, left);
+
+    wrapperElement?.appendChild(hintElement);
+
+    return {
+      hintElement: hintElement,
+      link,
+      key,
+    };
+  });
+
+  document.body.appendChild(wrapperElement);
 });

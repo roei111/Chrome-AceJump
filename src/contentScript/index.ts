@@ -1,32 +1,50 @@
 import { COMMANDS } from "../constants/commands";
 import { CURRENT_TEXT_ID, HINTS_WRAPPER_ID } from "../constants/IDs";
-import { createEnteredTextElement } from "./elementCreators/createEnteredTextElement";
-import { createHintElement } from "./elementCreators/createHintElement";
-import { createHintsWrapperElement } from "./elementCreators/createHintsWrapperElement";
-import { createLinkHighlighterElement } from "./elementCreators/createLinkHighlighterElement";
 import { MessageType } from "../types/MessageType";
 import { convertToNumberingScheme } from "../utils/convertToNumberingScheme";
 import { getVisibleLinks } from "../utils/getVisibleLinks";
 import { removeElementById } from "../utils/removeElementById";
 import { withStyles } from "../utils/withStyles";
+import { createEnteredTextElement } from "./elementCreators/createEnteredTextElement";
+import { createHintElement } from "./elementCreators/createHintElement";
+import { createHintsWrapperElement } from "./elementCreators/createHintsWrapperElement";
+import { createLinkHighlighterElement } from "./elementCreators/createLinkHighlighterElement";
 import { Store } from "./store";
 
 const store = new Store();
 
 function updateHighlightStyles(search: string) {
-  store.hintItems.forEach(({ hintElement, key }) => {
+  store.hintItems.forEach(async ({ hintElement, key, linkHighlighterElement }) => {
     const firstPart = key.substring(0, search.length);
 
     if (search && firstPart === search) {
-      withStyles(hintElement.selection)((theme) => {
+      await withStyles(hintElement.selection)((theme) => {
         return ({
-          width: `${firstPart.length * (theme.hint.size * 0.5714285714285)}px`,
+          width: `${firstPart.length * (Number(theme.hint.size) * 0.5714285714285)}px`,
         });
       });
+
+      if (search === key) {
+        await withStyles(linkHighlighterElement)((theme) => {
+          return ({
+            backgroundColor: theme.link.fill,
+            opacity: "0.2",
+          });
+        });
+      } else {
+        await withStyles(linkHighlighterElement)({
+          backgroundColor: "unset",
+          opacity: "unset",
+        });
+      }
     } else {
-      withStyles(hintElement.selection)(({
+      await withStyles(hintElement.selection)(({
         width: `0`,
       }));
+      await withStyles(linkHighlighterElement)({
+        backgroundColor: "unset",
+        opacity: "unset",
+      });
     }
   });
 }
@@ -66,19 +84,19 @@ const clearData = () => {
   document.removeEventListener("scroll", clearData);
 };
 
-browser.runtime.onMessage.addListener((message: MessageType) => {
+browser.runtime.onMessage.addListener(async (message: MessageType) => {
   if (message.command === COMMANDS.HIGHLIGHT) {
     clearData();
 
     const visibleLinks = getVisibleLinks();
 
-    const wrapperElement = createHintsWrapperElement();
-    const currentTextElement = createEnteredTextElement();
+    const wrapperElement = await createHintsWrapperElement();
+    const currentTextElement = await createEnteredTextElement();
     wrapperElement.addEventListener("click", clearData);
     document.addEventListener("keydown", keydownHandler);
     document.addEventListener("scroll", clearData);
 
-    store.setHintItems(visibleLinks.map((link, index) => {
+    store.setHintItems(await Promise.all(visibleLinks.map(async (link, index) => {
       const key = convertToNumberingScheme(index);
 
       const viewportOffset = link.getBoundingClientRect();
@@ -93,9 +111,9 @@ browser.runtime.onMessage.addListener((message: MessageType) => {
         height: viewportOffset.height,
       };
 
-      const { hint, selection, root } = createHintElement(elementRectData);
+      const { hint, selection, root } = await createHintElement(elementRectData);
       hint.textContent = key;
-      const borderElement = createLinkHighlighterElement(elementRectData);
+      const borderElement = await createLinkHighlighterElement(elementRectData);
 
       wrapperElement?.appendChild(borderElement);
       wrapperElement?.appendChild(root);
@@ -106,7 +124,7 @@ browser.runtime.onMessage.addListener((message: MessageType) => {
         link,
         key,
       };
-    }));
+    })));
 
     document.body.appendChild(wrapperElement);
     document.body.appendChild(currentTextElement);

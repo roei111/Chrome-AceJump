@@ -3,6 +3,11 @@
 ## About
 Mozilla AceJump is a simple extension that helps users navigate links without using a mouse.
 
+#### Default shortcuts
+
++ Linux: **Ctrl+Shift+Q**
++ Windows: **Ctrl+Q**
+
 ### How to install
 
 #### Requirements

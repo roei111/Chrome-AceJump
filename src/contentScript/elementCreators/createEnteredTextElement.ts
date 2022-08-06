@@ -1,7 +1,7 @@
-import { CURRENT_TEXT_ID } from "../constants/IDs";
-import { removeElementById } from "../utils/removeElementById";
-import { Theme } from "../utils/theme";
-import { withStyles } from "../utils/withStyles";
+import { CURRENT_TEXT_ID } from "../../constants/IDs";
+import { removeElementById } from "../../utils/removeElementById";
+import { Theme } from "../../utils/theme";
+import { withStyles } from "../../utils/withStyles";
 
 function createEnteredTextStyle(theme: Theme) {
   return {

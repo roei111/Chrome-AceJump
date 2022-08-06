@@ -1,6 +1,6 @@
-import { HINTS_WRAPPER_ID } from "../constants/IDs";
-import { removeElementById } from "../utils/removeElementById";
-import { withStyles } from "../utils/withStyles";
+import { HINTS_WRAPPER_ID } from "../../constants/IDs";
+import { removeElementById } from "../../utils/removeElementById";
+import { withStyles } from "../../utils/withStyles";
 
 function createHintsWrapperStyle() {
   return {

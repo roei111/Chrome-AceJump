@@ -1,9 +1,9 @@
 import { COMMANDS } from "../constants/commands";
 import { CURRENT_TEXT_ID, HINTS_WRAPPER_ID } from "../constants/IDs";
-import { createEnteredTextElement } from "../elementCreators/createEnteredTextElement";
-import { createHintElement } from "../elementCreators/createHintElement";
-import { createHintsWrapperElement } from "../elementCreators/createHintsWrapperElement";
-import { createLinkHighlighterElement } from "../elementCreators/createLinkHighlighterElement";
+import { createEnteredTextElement } from "./elementCreators/createEnteredTextElement";
+import { createHintElement } from "./elementCreators/createHintElement";
+import { createHintsWrapperElement } from "./elementCreators/createHintsWrapperElement";
+import { createLinkHighlighterElement } from "./elementCreators/createLinkHighlighterElement";
 import { MessageType } from "../types/MessageType";
 import { convertToNumberingScheme } from "../utils/convertToNumberingScheme";
 import { getVisibleLinks } from "../utils/getVisibleLinks";

@@ -1,6 +1,6 @@
-import { ElementReact } from "../types/ElementReact";
-import { Theme } from "../utils/theme";
-import { withStyles } from "../utils/withStyles";
+import { ElementReact } from "../../types/ElementReact";
+import { Theme } from "../../utils/theme";
+import { withStyles } from "../../utils/withStyles";
 
 function createHintStyle(options: ElementReact) {
   const top = options.top - 18 <= 0 ? `${options.top + options.height}px` : `${options.top - 18}px`;

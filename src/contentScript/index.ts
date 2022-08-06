@@ -14,7 +14,7 @@ import { Store } from "./store";
 const store = new Store();
 
 function updateHighlightStyles(search: string) {
-  store.hintItems.forEach(({ hintElement, key, linkHighlighterElement }) => {
+  store.hintItems.forEach(({ hintElement, key }) => {
     const firstPart = key.substring(0, search.length);
 
     if (search && firstPart === search) {

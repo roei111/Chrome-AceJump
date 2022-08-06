@@ -22,31 +22,41 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Upload source code artifacts
-      uses: actions/upload-artifact@v2
-      with: 
-        name: source
-        path: .
-
-    - name: Build
-      run: |
-        npm install -g pnpm
-        pnpm install
-        pnpm build
-        
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v2
-      with: 
-        name: bundle
-        path: dist
-        
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ github.ref_name }}
+        release_name: Release ${{ github.ref_name }}
         draft: true
         prerelease: false
+
+    - name: Upload Release Asset
+      id: upload-sourve-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: .
+        asset_name: sourcet.zip
+        asset_content_type: application/zip
+
+    - name: Build
+      run: |
+        npm install -g pnpm
+        pnpm install
+        pnpm build
+
+    - name: Upload Release Asset
+      id: upload-bundle-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist
+        asset_name: bundle.zip
+        asset_content_type: application/zip

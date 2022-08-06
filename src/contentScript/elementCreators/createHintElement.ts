@@ -1,5 +1,5 @@
 import { ElementReact } from "../../types/ElementReact";
-import { Theme } from "../../utils/theme";
+import { Theme } from "../theme";
 import { withStyles } from "../../utils/withStyles";
 
 function createHintStyle(options: ElementReact) {
@@ -22,10 +22,10 @@ function createHintStyle(options: ElementReact) {
   };
 }
 
-export function createHintElement(options: ElementReact) {
-  const div = withStyles(document.createElement("div"))(createHintStyle(options));
+export async function createHintElement(options: ElementReact) {
+  const div = await withStyles(document.createElement("div"))(createHintStyle(options));
 
-  const selection = withStyles(document.createElement("div"))((theme) => ({
+  const selection = await withStyles(document.createElement("div"))((theme) => ({
     position: "absolute",
     top: "0",
     left: "0",

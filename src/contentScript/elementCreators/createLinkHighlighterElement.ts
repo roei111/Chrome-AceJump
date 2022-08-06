@@ -1,5 +1,5 @@
 import { ElementReact } from "../../types/ElementReact";
-import { Theme } from "../../utils/theme";
+import { Theme } from "../theme";
 import { withStyles } from "../../utils/withStyles";
 
 function createHintStyle(options: ElementReact) {

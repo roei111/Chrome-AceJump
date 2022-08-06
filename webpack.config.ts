@@ -1,11 +1,12 @@
-const path = require('path');
+const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-  mode: 'production',
+  mode: "production",
   entry: {
     background_script: path.join(__dirname, "src/backgroundScript/index.ts"),
     content_script: path.join(__dirname, "src/contentScript/index.ts"),
+    options: path.join(__dirname, "src/options/index.tsx"),
   },
   module: {
     rules: [
@@ -14,6 +15,10 @@ module.exports = {
         loader: "ts-loader",
         test: /\.tsx?$/,
       },
+      {
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"],
+      },
     ],
   },
   resolve: {
@@ -21,7 +26,11 @@ module.exports = {
   },
   optimization: {
     splitChunks: {
-      chunks: 'all',
+      cacheGroups: {
+        defaultVendors: {
+          filename: '[name].js',
+        },
+      },
     },
   },
   plugins: [

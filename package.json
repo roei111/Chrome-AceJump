@@ -9,7 +9,7 @@
     "watch": "webpack --watch",
     "start": "web-ext run --source-dir ./dist",
     "asset:source": "ts-node archiveSource.ts",
-    "asset:dist": "ts-node archiveBundle.ts"
+    "asset:bundle": "ts-node archiveBundle.ts"
   },
   "keywords": [
     "acejump",

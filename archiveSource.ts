@@ -1,7 +1,7 @@
 const archiver = require("archiver");
 const fs = require("fs");
 
-const ignoredFiles = ["acejump.iml"];
+const ignoredFiles = ["acejump.iml", "bundle.zip"];
 
 const output = fs.createWriteStream(__dirname + "/source.zip");
 const archive = archiver("zip", {

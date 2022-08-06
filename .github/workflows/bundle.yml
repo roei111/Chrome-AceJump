@@ -30,9 +30,9 @@ jobs:
         
     - name: Generate assets
       run: |
-        pnpm asset:bundle
         pnpm asset:source
-        
+        pnpm asset:bundle
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1

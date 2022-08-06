@@ -22,14 +22,20 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
+    - name: Upload source code artifacts
+      uses: actions/upload-artifact@v2
+      with: 
+        name: source
+        path: .
+
     - name: Build
       run: |
         npm install -g pnpm
         pnpm install
         pnpm bundle
         
-    - name: Use the Upload Artifact GitHub Action
+    - name: Upload build artifacts
       uses: actions/upload-artifact@v2
       with: 
         name: web-ext-artifacts
-        path: web-ext-artifacts/*
+        path: web-ext-artifacts/*.zip

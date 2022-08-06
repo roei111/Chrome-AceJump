@@ -4,11 +4,11 @@ import { SketchPicker } from "react-color";
 
 // FIXME: get rid of duplication
 const App = () => {
-  const [hintBackground, setHintBackground] = useState("#FFFFFF");
-  const [hintHighlight, setHintHighlight] = useState("#FFFFFF");
-  const [linkBorder, setLinkBorder] = useState("#FFFFFF");
-  const [linkFill, setLinkFill] = useState("#FFFFFF");
-  const [enteredBorder, setEnteredBorder] = useState("#FFFFFF");
+  const [hintBackground, setHintBackground] = useState("#FFFF00");
+  const [hintHighlight, setHintHighlight] = useState("#adff2f");
+  const [linkBorder, setLinkBorder] = useState("#FF0000");
+  const [linkFill, setLinkFill] = useState("#4958f8");
+  const [enteredBorder, setEnteredBorder] = useState("#00FF00");
 
 
   const [variant, setVariant] = useState("");

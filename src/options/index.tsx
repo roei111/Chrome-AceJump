@@ -1,8 +1,8 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import App from "./App";
+import Options from "./Options";
 
 ReactDOM.render(
-  <App />,
+  <Options />,
   document.getElementById("root") as HTMLDivElement,
 );

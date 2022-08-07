@@ -20,11 +20,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Zip source
-      uses: montudor/action-zip@v1
-      with:
-        args: zip -qq -r source.zip .
-
     - name: Build
       run: |
         npm install -g pnpm
@@ -41,7 +36,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref_name }} (${{ steps.package-version.outputs.current-version }})
+        tag_name: ${{ steps.package-version.outputs.current-version }}
         release_name: Release ${{ github.ref_name }} (${{ steps.package-version.outputs.current-version }})
         draft: true
         prerelease: false
@@ -55,15 +50,4 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: './web-ext-artifacts/acejump-${{ steps.package-version.outputs.current-version }}.zip'
         asset_name: 'acejump-${{ steps.package-version.outputs.current-version }}.zip'
-        asset_content_type: application/zip
-
-    - name: Upload Source Asset
-      id: upload-source-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: './source.zip'
-        asset_name: 'source-${{ steps.package-version.outputs.current-version }}.zip'
         asset_content_type: application/zip

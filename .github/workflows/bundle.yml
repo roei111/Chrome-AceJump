@@ -1,4 +1,4 @@
-name: Bundle projext
+name: Bundle project
 
 on:
   push:
@@ -26,20 +26,20 @@ jobs:
         pnpm install
         pnpm bundle
 
+    - name: Get version
+      id: package-version
+      uses: martinbeentjes/npm-get-version-action@main
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref_name }}
-        release_name: Release ${{ github.ref_name }}
+        tag_name: ${{ github.ref_name }} (${{ steps.package-version.outputs.current-version }})
+        release_name: Release ${{ github.ref_name }} (${{ steps.package-version.outputs.current-version }})
         draft: true
         prerelease: false
-
-    - name: Get version
-      id: package-version
-      uses: martinbeentjes/npm-get-version-action@main
 
     - name: Upload Release Asset
       id: upload-bundle-asset

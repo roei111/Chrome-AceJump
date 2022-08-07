@@ -1,4 +1,10 @@
+<div align="center">
+  <a href="https://addons.mozilla.org/ru/firefox/addon/acejump/">
+    <img width="300" height="200" src="https://drive.google.com/uc?export=view&id=1J0IvMpwcRI5vhYhr_lGaAkaCuesr7kTC">
+  </a>
+</div>
 
+[![Firefox - add-on](https://img.shields.io/static/v1?label=Firefox&message=add-on&color=%23FF7139&logo=Firefox+Browser)](https://addons.mozilla.org/ru/firefox/addon/acejump/)
 
 ## About
 Mozilla AceJump is a simple extension that helps users navigate links without using a mouse.

@@ -48,3 +48,10 @@ pnpm start --firefox="C:\Program Files\Mozilla Firefox\firefox.exe"
 ````
 
 The browser will open with the installed extension.
+
+### TODO
+
+- [x] Color customization
+- [ ] Show only on really visible elements
+- [ ] Open links with target=_blank without pop-up blocker
+- [ ] Add more costomizations

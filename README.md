@@ -54,4 +54,5 @@ The browser will open with the installed extension.
 - [x] Color customization
 - [ ] Show only on really visible elements
 - [ ] Open links with target=_blank without pop-up blocker
+- [ ] Select text input fields
 - [ ] Add more costomizations

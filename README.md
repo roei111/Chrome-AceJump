@@ -58,3 +58,4 @@ The browser will open with the installed extension.
 - [ ] Select buttons
 - [ ] Option to open links in a new tab
 - [ ] Add more costomizations
+- [ ] Add localizations

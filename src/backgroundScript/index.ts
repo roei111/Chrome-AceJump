@@ -3,24 +3,14 @@ import { MessageType } from "../types/MessageType";
 
 function sendMessageToTabs(tabs: chrome.tabs.Tab[]) {
   for (let tab of tabs) {
-    console.log("Tab: ", tab);
     if (tab.id) {
       const message: MessageType = { command: COMMANDS.HIGHLIGHT };
-      console.log("sensing message", message);
-      console.log("tab.id", tab.id);
-      void chrome.tabs.sendMessage(tab.id, message, function (response) {
-        if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError);
-        } else {
-          console.log("Response from content script:", response);
-        }
-      });
+      void chrome.tabs.sendMessage(tab.id, message);
     }
   }
 }
 
 chrome.commands.onCommand.addListener(function (command) {
-  console.log("**********", command);
   if (command === COMMANDS.HIGHLIGHT) {
     chrome.tabs.query(
       {
@@ -29,5 +19,11 @@ chrome.commands.onCommand.addListener(function (command) {
       },
       sendMessageToTabs
     );
+  }
+});
+
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  if (message.command === "openInBackground" && message.url) {
+    chrome.tabs.create({ url: message.url, active: false });
   }
 });

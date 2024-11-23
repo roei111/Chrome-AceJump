@@ -69,10 +69,17 @@ function keydownHandler(event: KeyboardEvent) {
     );
 
     if (hintItem) {
-      hintItem.link.click();
+      if (event.shiftKey) {
+        chrome.runtime.sendMessage({
+          command: "openInBackground",
+          url: hintItem.link.href,
+        });
+      } else {
+        hintItem.link.click();
+        clearData();
+      }
     }
-
-    clearData();
+    store.setCurrentKeys("");
   }
 
   if (event.key === "Escape") {

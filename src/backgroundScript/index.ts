@@ -1,20 +1,33 @@
 import { COMMANDS } from "../constants/commands";
 import { MessageType } from "../types/MessageType";
 
-function sendMessageToTabs(tabs: browser.tabs.Tab[]) {
+function sendMessageToTabs(tabs: chrome.tabs.Tab[]) {
   for (let tab of tabs) {
+    console.log("Tab: ", tab);
     if (tab.id) {
       const message: MessageType = { command: COMMANDS.HIGHLIGHT };
-      void browser.tabs.sendMessage(tab.id, message);
+      console.log("sensing message", message);
+      console.log("tab.id", tab.id);
+      void chrome.tabs.sendMessage(tab.id, message, function (response) {
+        if (chrome.runtime.lastError) {
+          console.error(chrome.runtime.lastError);
+        } else {
+          console.log("Response from content script:", response);
+        }
+      });
     }
   }
 }
 
-browser.commands.onCommand.addListener(function (command) {
+chrome.commands.onCommand.addListener(function (command) {
+  console.log("**********", command);
   if (command === COMMANDS.HIGHLIGHT) {
-    browser.tabs.query({
-      currentWindow: true,
-      active: true,
-    }).then(sendMessageToTabs);
+    chrome.tabs.query(
+      {
+        currentWindow: true,
+        active: true,
+      },
+      sendMessageToTabs
+    );
   }
 });

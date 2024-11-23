@@ -2,11 +2,6 @@
   "manifest_version": 2,
   "name": "AceJump",
   "version": "1.2.2",
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "{c904a6da-4861-4e71-af76-af2a888da273}"
-    }
-  },
   "description": "AceJump allows you to quickly navigate any visible links",
   "homepage_url": "https://github.com/cjvnjde/Mozilla-AceJump",
   "icons": {
@@ -17,32 +12,22 @@
     "highlight": {
       "suggested_key": {
         "default": "Ctrl+Shift+Q",
-        "windows": "Ctrl+Q"
+        "windows": "Ctrl+Q",
+        "mac": "Command+J"
       },
       "description": "Highlight visible links"
     }
   },
   "background": {
-    "scripts": [
-      "./build/background_script.js"
-    ]
+    "service_worker": "./build/background_script.js"
   },
-  "options_ui": {
-    "page": "./html/options.html",
-    "browser_style": true
-  },
-  "permissions": [
-    "storage",
-    "<all_urls>"
-  ],
+  "options_page": "./html/options.html",
+  "permissions": ["storage", "<all_urls>", "tabs", "activeTab", "scripting"],
   "content_scripts": [
     {
-      "matches": [
-        "<all_urls>"
-      ],
-      "js": [
-        "./build/content_script.js"
-      ]
+      "matches": ["<all_urls>"],
+      "js": ["./build/content_script.js"],
+      "run_at": "document_start"
     }
   ]
 }

@@ -1,22 +1,32 @@
-import { Alert, Button, Divider, Snackbar, Stack, Typography } from "@mui/material";
+import {
+  Alert,
+  Button,
+  Divider,
+  Snackbar,
+  Stack,
+  Typography,
+} from "@mui/material";
 import React, { useState } from "react";
 import ColorPicker from "./components/ColorPicker";
 import { initialState, useThemeStore } from "./useThemeStore";
 
 const Options = () => {
-  const [state, dispatch] = useThemeStore() as [typeof initialState, (data: any) => void];
+  const [state, dispatch] = useThemeStore() as [
+    typeof initialState,
+    (data: any) => void
+  ];
 
   const [snackbar, setSnackbar] = useState(false);
 
   const onApply = () => {
-    browser.storage.sync.set(state).then(() => {
+    chrome.storage.sync.set(state).then(() => {
       setSnackbar(true);
     });
   };
 
   const onReset = () => {
     dispatch({ type: "theme", payload: initialState });
-    browser.storage.sync.set(initialState).then(() => {
+    chrome.storage.sync.set(initialState).then(() => {
       setSnackbar(true);
     });
   };
@@ -33,14 +43,14 @@ const Options = () => {
 
         <ColorPicker
           value={state.hint.background}
-          onChange={color => {
+          onChange={(color) => {
             dispatch({ type: "hint.background", payload: color });
           }}
           label="Hint background"
         />
         <ColorPicker
           value={state.hint.highlight}
-          onChange={color => {
+          onChange={(color) => {
             dispatch({ type: "hint.highlight", payload: color });
           }}
           label="Hint highlight"
@@ -49,14 +59,14 @@ const Options = () => {
         <Typography>Link settings</Typography>
         <ColorPicker
           value={state.link.border}
-          onChange={color => {
+          onChange={(color) => {
             dispatch({ type: "link.border", payload: color });
           }}
           label="Link border"
         />
         <ColorPicker
           value={state.link.fill}
-          onChange={color => {
+          onChange={(color) => {
             dispatch({ type: "link.fill", payload: color });
           }}
           label="Link fill"
@@ -65,27 +75,26 @@ const Options = () => {
         <Typography>Entered text settings</Typography>
         <ColorPicker
           value={state.entered.border}
-          onChange={color => {
+          onChange={(color) => {
             dispatch({ type: "entered.border", payload: color });
           }}
           label="Entered border"
         />
 
-        <Stack spacing={2} direction="row" alignItems="center" marginTop="16px" marginBottom="4px">
-          <Button
-            onClick={onApply}
-            variant="contained"
-          >
+        <Stack
+          spacing={2}
+          direction="row"
+          alignItems="center"
+          marginTop="16px"
+          marginBottom="4px"
+        >
+          <Button onClick={onApply} variant="contained">
             Save
           </Button>
-          <Button
-            onClick={onReset}
-            variant="outlined"
-          >
+          <Button onClick={onReset} variant="outlined">
             Reset to defaults
           </Button>
         </Stack>
-
       </Stack>
       <Snackbar
         open={snackbar}

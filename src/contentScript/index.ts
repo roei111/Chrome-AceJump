@@ -14,49 +14,59 @@ import { Store } from "./store";
 const store = new Store();
 
 function updateHighlightStyles(search: string) {
-  store.hintItems.forEach(async ({ hintElement, key, linkHighlighterElement }) => {
-    const firstPart = key.substring(0, search.length);
+  store.hintItems.forEach(
+    async ({ hintElement, key, linkHighlighterElement }) => {
+      const firstPart = key.substring(0, search.length);
 
-    if (search && firstPart === search) {
-      await withStyles(hintElement.selection)((theme) => {
-        return ({
-          width: `${firstPart.length * (Number(theme.hint.size) * 0.5714285714285)}px`,
+      if (search && firstPart === search) {
+        await withStyles(hintElement.selection)((theme) => {
+          return {
+            width: `${
+              firstPart.length * (Number(theme.hint.size) * 0.5714285714285)
+            }px`,
+          };
         });
-      });
 
-      if (search === key) {
-        await withStyles(linkHighlighterElement)((theme) => {
-          return ({
-            backgroundColor: theme.link.fill,
-            opacity: "0.2",
+        if (search === key) {
+          await withStyles(linkHighlighterElement)((theme) => {
+            return {
+              backgroundColor: theme.link.fill,
+              opacity: "0.2",
+            };
           });
-        });
+        } else {
+          await withStyles(linkHighlighterElement)({
+            backgroundColor: "unset",
+            opacity: "unset",
+          });
+        }
       } else {
+        await withStyles(hintElement.selection)({
+          width: `0`,
+        });
         await withStyles(linkHighlighterElement)({
           backgroundColor: "unset",
           opacity: "unset",
         });
       }
-    } else {
-      await withStyles(hintElement.selection)(({
-        width: `0`,
-      }));
-      await withStyles(linkHighlighterElement)({
-        backgroundColor: "unset",
-        opacity: "unset",
-      });
     }
-  });
+  );
 }
 
 function keydownHandler(event: KeyboardEvent) {
-  if (store.hintItems.length && event.key.length === 1 && event.key.match(/[a-z]/i)) {
+  if (
+    store.hintItems.length &&
+    event.key.length === 1 &&
+    event.key.match(/[a-z]/i)
+  ) {
     store.setCurrentKeys(store.currentKeys + event.key.toUpperCase());
     updateHighlightStyles(store.currentKeys);
   }
 
-  if (event.key === "Enter" && store.currentKeys.length) {
-    const hintItem = store.hintItems.find(({ key }) => key === store.currentKeys);
+  if (store.currentKeys.length) {
+    const hintItem = store.hintItems.find(
+      ({ key }) => key === store.currentKeys
+    );
 
     if (hintItem) {
       hintItem.link.click();
@@ -70,7 +80,10 @@ function keydownHandler(event: KeyboardEvent) {
   }
 
   if (event.key === "Backspace") {
-    const newText = store.currentKeys.substring(0, store.currentKeys.length - 1);
+    const newText = store.currentKeys.substring(
+      0,
+      store.currentKeys.length - 1
+    );
     store.setCurrentKeys(newText);
     updateHighlightStyles(newText);
   }
@@ -84,7 +97,7 @@ const clearData = () => {
   document.removeEventListener("scroll", clearData);
 };
 
-browser.runtime.onMessage.addListener(async (message: MessageType) => {
+chrome.runtime.onMessage.addListener(async (message: MessageType) => {
   if (message.command === COMMANDS.HIGHLIGHT) {
     clearData();
 
@@ -96,35 +109,43 @@ browser.runtime.onMessage.addListener(async (message: MessageType) => {
     document.addEventListener("keydown", keydownHandler);
     document.addEventListener("scroll", clearData);
 
-    store.setHintItems(await Promise.all(visibleLinks.map(async (link, index) => {
-      const key = convertToNumberingScheme(index);
+    store.setHintItems(
+      await Promise.all(
+        visibleLinks.map(async (link, index) => {
+          const key = convertToNumberingScheme(index);
 
-      const viewportOffset = link.getBoundingClientRect();
+          const viewportOffset = link.getBoundingClientRect();
 
-      const top = viewportOffset.top;
-      const left = viewportOffset.left;
+          const top = viewportOffset.top;
+          const left = viewportOffset.left;
 
-      const elementRectData = {
-        top,
-        left,
-        width: viewportOffset.width,
-        height: viewportOffset.height,
-      };
+          const elementRectData = {
+            top,
+            left,
+            width: viewportOffset.width,
+            height: viewportOffset.height,
+          };
 
-      const { hint, selection, root } = await createHintElement(elementRectData);
-      hint.textContent = key;
-      const borderElement = await createLinkHighlighterElement(elementRectData);
+          const { hint, selection, root } = await createHintElement(
+            elementRectData
+          );
+          hint.textContent = key;
+          const borderElement = await createLinkHighlighterElement(
+            elementRectData
+          );
 
-      wrapperElement?.appendChild(borderElement);
-      wrapperElement?.appendChild(root);
+          wrapperElement?.appendChild(borderElement);
+          wrapperElement?.appendChild(root);
 
-      return {
-        hintElement: { hint, selection, root },
-        linkHighlighterElement: borderElement,
-        link,
-        key,
-      };
-    })));
+          return {
+            hintElement: { hint, selection, root },
+            linkHighlighterElement: borderElement,
+            link,
+            key,
+          };
+        })
+      )
+    );
 
     document.body.appendChild(wrapperElement);
     document.body.appendChild(currentTextElement);

@@ -14,7 +14,10 @@ export const initialState = {
   },
 } as const;
 
-function reducer(state: typeof initialState, action: { type: string; payload?: any }) {
+function reducer(
+  state: typeof initialState,
+  action: { type: string; payload?: any }
+) {
   switch (action.type) {
     case "entered.border": {
       return {
@@ -86,7 +89,7 @@ export function useThemeStore() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    browser.storage.sync.get().then(data => {
+    chrome.storage.sync.get(null, (data) => {
       dispatch({ type: "theme", payload: data });
     });
   }, []);
